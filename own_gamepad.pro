@@ -38,6 +38,7 @@ unix: {
 }
 
 win32: {
+# Change to your path
     INCLUDEPATH += "C:\SDL2-2.0.5\include"
     LIBS += -LC:\sdl -lSDL2 -lSDL2main
 }
