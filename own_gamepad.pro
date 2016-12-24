@@ -47,3 +47,15 @@ first.depends = $(first) soundfiles
 export(first.depends)
 export(soundfiles.commands)
 QMAKE_EXTRA_TARGETS += first soundfiles
+
+DISTFILES += \
+    README.md \
+    sounds/1.wav \
+    sounds/2.wav \
+    sounds/3.wav \
+    sounds/4.wav \
+    sounds/answer.wav \
+    sounds/answers-player.wav \
+    sounds/false-start.wav \
+    sounds/reset.wav \
+    sounds/start.wav
