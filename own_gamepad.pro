@@ -35,6 +35,14 @@ FORMS    += mainwindow.ui \
 unix: {
     INCLUDEPATH += /usr/include/SDL2
     LIBS += -lSDL2
+    soundfiles.commands = $(COPY_DIR) $$PWD/sounds $$OUT_PWD
+    trs.commands = $(COPY_DIR) $$PWD/translations $$OUT_PWD
+#On Windows copy these folders manually. (TODO: fix)
+    first.depends = $(first) soundfiles trs
+    export(first.depends)
+    export(soundfiles.commands)
+    export(trs.commands)
+    QMAKE_EXTRA_TARGETS += first soundfiles trs
 }
 
 win32: {
@@ -43,11 +51,6 @@ win32: {
     LIBS += -LC:\sdl -lSDL2 -lSDL2main
 }
 
-soundfiles.commands = $(COPY_DIR) $$PWD/sounds $$OUT_PWD
-first.depends = $(first) soundfiles
-export(first.depends)
-export(soundfiles.commands)
-QMAKE_EXTRA_TARGETS += first soundfiles
 
 DISTFILES += \
     README.md \
@@ -60,3 +63,10 @@ DISTFILES += \
     sounds/false-start.wav \
     sounds/reset.wav \
     sounds/start.wav
+
+TRANSLATIONS += \
+    translations/own_gamepad_ru.ts
+ 
+tr.commands = lupdate \"$$_PRO_FILE_\" && lrelease \"$$_PRO_FILE_\"
+    PRE_TARGETDEPS += tr
+    QMAKE_EXTRA_TARGETS += tr

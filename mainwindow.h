@@ -6,6 +6,7 @@
 #include <QThread>
 #include <QTimer>
 #include <QShortcut>
+#include <QMessageBox>
 #include "gamepads.h"
 #include "assignwizard.h"
 #include "soundsignals.h"
@@ -39,6 +40,8 @@ public slots:
     void startRound(void);
     void unbanAll();
     void falseStartChanged();
+    void gamepadUnplugged(int gamepad);
+    void reassign();
 
 };
 

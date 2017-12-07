@@ -29,8 +29,20 @@ void GamePads::waitEvents()
             if (event.type == SDL_JOYBUTTONDOWN)
             {
                 events.append(event);
-//                qDebug() << "pressed" << event.jbutton.which << event.jbutton.button ;
+                qDebug() << "pressed" << event.jbutton.which << event.jbutton.button << SDL_NumJoysticks();
                 emit buttonPressed(event.jbutton.which);
+            }
+            else if (event.type == SDL_JOYDEVICEADDED)
+            {
+//                SDL_JoystickOpen(event.jdevice.which);
+                qDebug() << "Added joystick" << event.jdevice.which << ", now" << SDL_NumJoysticks();
+                gamepads.append(SDL_JoystickOpen(event.jdevice.which));
+                num_gamepads = SDL_NumJoysticks();
+            }
+            else if (event.type == SDL_JOYDEVICEREMOVED)
+            {
+                qDebug() << "Removed joystick" << event.jdevice.which << ", now" << SDL_NumJoysticks();
+                emit gamepadUnplugged(event.jdevice.which);
             }
         }
         if (events.size() > 1)

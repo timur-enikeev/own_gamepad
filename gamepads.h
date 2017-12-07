@@ -17,6 +17,7 @@ public:
 
 signals:
     void buttonPressed(int gamepad);
+    void gamepadUnplugged(int gamepad);
 public slots:
     void waitEvents();
 };

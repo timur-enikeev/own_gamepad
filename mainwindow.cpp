@@ -3,11 +3,10 @@
 #include "assignwizard.h"
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), assignwiz(this, gp.num_gamepads), startShortcut(QKeySequence(Qt::Key_X), this),
+    QMainWindow(parent), startShortcut(QKeySequence(Qt::Key_X), this),
     resetShortcut(QKeySequence(Qt::Key_Z), this),
     ui(new Ui::MainWindow)
 {
-    assignwiz.pp.playersGamepads = &playersGamepads;
     ui->setupUi(this);
     connect(&gp, &GamePads::buttonPressed, &assignwiz.pp, &playerWizardPage::buttonPressed);
 
@@ -17,14 +16,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&gamepadsThread, &QThread::started, &gp, &GamePads::waitEvents);
 //    connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::af);
     gamepadsThread.start();
-    assignwiz.setModal(true);
-    assignwiz.exec();
-    disconnect(&gp, &GamePads::buttonPressed, &assignwiz.pp, &playerWizardPage::buttonPressed);
-    connect(&gp, &GamePads::buttonPressed, this, &MainWindow::buttonPressed);
+    this->reassign();
+    connect(&gp, &GamePads::gamepadUnplugged, this, &MainWindow::gamepadUnplugged);
     connect(ui->falseStartsEnable,SIGNAL(toggled(bool)),this,SLOT(falseStartChanged()));
     connect(ui->voiceSignals,SIGNAL(toggled(bool)),this,SLOT(falseStartChanged()));
     connect(ui->resetButton,SIGNAL(clicked()),this,SLOT(resetRound()));
     connect(ui->startButton,SIGNAL(clicked()),this,SLOT(startRound()));
+    connect(ui->actionReassign,SIGNAL(triggered(bool)),this,SLOT(reassign()));
+
     banTimer.setSingleShot(true);
     connect(&banTimer, SIGNAL(timeout()), this, SLOT(unbanAll()));
     soundSignals.addPlayerNumberVoices(assignwiz.nop.numberOfPlayers);
@@ -58,7 +57,7 @@ void MainWindow::buttonPressed(int gamepad)
         if (player >= 0 && (!ui->falseStartsEnable->isChecked() || ! banned.contains(player)))
         {
             ui->answeringPlayer->setText(QString::number(player+1));
-            if (ui->voiceSignals->checkState() == Qt::Checked)
+            if (ui->voiceSignals->checkState() == Qt::Checked || ((ui->voiceSignals->checkState() == Qt::PartiallyChecked) && (ui->falseStartVoice->checkState() == Qt::Checked) && (!banned.empty())))
                 soundSignals.answer(player, false);
             else if (ui->voiceSignals->checkState() == Qt::PartiallyChecked)
                 soundSignals.answer(player, true);
@@ -72,11 +71,12 @@ void MainWindow::buttonPressed(int gamepad)
         if (!banned.contains(player))
         {
             banned.insert(player);
-            if (ui->falseStartVoice->isChecked())
+            if (ui->falseStartVoice->isChecked() && ui->voiceSignals->isChecked())
                 soundSignals.falseStart(player);
             ui->bannedPlayers->addItem(QString::number(player+1));
         }
     }
+    qDebug() << "bp" << gamepad;
 }
 
 void MainWindow::startRound()
@@ -133,4 +133,30 @@ void MainWindow::unbanAll()
 {
     banned.clear();
     ui->bannedPlayers->clear();
+}
+
+void MainWindow::gamepadUnplugged(int gamepad)
+{
+    QMessageBox::critical(this, tr("Unplugged"),
+                                     tr("Gamepad was unplugged"));
+}
+
+void MainWindow::reassign()
+{
+    assignwiz.~assignWizard();
+    new(&assignwiz) assignWizard(this, gp.num_gamepads);
+    assignwiz.setModal(true);
+    disconnect(&gp, &GamePads::buttonPressed, this, &MainWindow::buttonPressed);
+    connect(&gp, &GamePads::buttonPressed, &assignwiz.pp, &playerWizardPage::buttonPressed);
+    QVector<int> playersGamepadsTemp;
+    assignwiz.pp.playersGamepads = &playersGamepadsTemp;
+    assignwiz.exec();
+    disconnect(&gp, &GamePads::buttonPressed, &assignwiz.pp, &playerWizardPage::buttonPressed);
+    connect(&gp, &GamePads::buttonPressed, this, &MainWindow::buttonPressed);
+
+    if (assignwiz.result()){
+        playersGamepads = playersGamepadsTemp;
+    }
+    //    qDebug()<< "done" << assignwiz.result();
+
 }
