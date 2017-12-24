@@ -7,6 +7,7 @@
 #include <QTimer>
 #include <QShortcut>
 #include <QMessageBox>
+#include <QSettings>
 #include "gamepads.h"
 #include "assignwizard.h"
 #include "soundsignals.h"
@@ -24,6 +25,7 @@ public:
     QThread gamepadsThread;
     GamePads gp;
     QVector<int>playersGamepads; //Index is player's number, value is gamepad number.
+    QSettings settings;
 
 private:
     Ui::MainWindow *ui;
@@ -39,9 +41,12 @@ public slots:
     void resetRound(void);
     void startRound(void);
     void unbanAll();
-    void falseStartChanged();
+//    void falseStartChanged();
     void gamepadUnplugged(int gamepad);
     void reassign();
+    void getSettingsToControls(); //Set UI controls of settings from QSettings
+    void setSettingsFromControls(); //Read data from UI controls of settings and write the data to QSettings
+    void showParameters(bool);
 
 };
 
