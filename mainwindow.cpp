@@ -25,7 +25,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionReassign,SIGNAL(triggered(bool)),this,SLOT(reassign()));
 
     banTimer.setSingleShot(true);
+    reminderTimer.setSingleShot(true);
     connect(&banTimer, SIGNAL(timeout()), this, SLOT(unbanAll()));
+    connect(&reminderTimer, SIGNAL(timeout()), this, SLOT(resetReminderSoundStart()));
     soundSignals.addPlayerNumberVoices(assignwiz.nop.numberOfPlayers);
     connect(ui->volumeSlider,SIGNAL(valueChanged(int)),&soundSignals, SLOT(changeVolume(int)));
     connect(ui->bannedListShow,SIGNAL(toggled(bool)),ui->bannedWidget,SLOT(setVisible(bool)));
@@ -37,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&resetShortcut,SIGNAL(activated()),this,SLOT(resetRound()));
     ui->bannedWidget->hide();
     getSettingsToControls();
+    setSettingsFromControls();
     soundSignals.changeVolume(ui->volumeSlider->value());
 //    falseStartChanged();
     connect(ui->volumeSlider,SIGNAL(valueChanged(int)),this, SLOT(setSettingsFromControls()));
@@ -45,6 +48,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->voiceSignals, SIGNAL(stateChanged(int)), this, SLOT(setSettingsFromControls()));
     connect(ui->falseStartVoice, SIGNAL(stateChanged(int)), this, SLOT(setSettingsFromControls()));
     connect(ui->banTime, SIGNAL(valueChanged(int)), this, SLOT(setSettingsFromControls()));
+    connect(ui->resetReminder, SIGNAL(toggled(bool)), this, SLOT(setSettingsFromControls()));
+    connect(ui->resetReminderTime, SIGNAL(valueChanged(int)), this, SLOT(setSettingsFromControls()));
     connect(ui->actionParameters, SIGNAL(toggled(bool)), this, SLOT(showParameters(bool)));
     resetRound();
 }
@@ -74,6 +79,8 @@ void MainWindow::buttonPressed(int gamepad)
             else
                 soundSignals.answer(-1, false);
             stage = 0;
+            if (settings.value("sound/reset_reminder").toBool())
+                reminderTimer.start(settings.value("sound/reset_reminder_time").toInt() * 1000);
         }
     }
     else if (stage == 1)
@@ -94,7 +101,8 @@ void MainWindow::startRound()
     if (stage == 0 || stage == 2)
         unbanAll();
     ui->answeringPlayer->clear();
-
+    reminderTimer.stop();
+    soundSignals.resetReminder(false);
     stage = 2;
     if (settings.value("falsestarts/falsestarts_enabled").toBool() && (settings.value("falsestarts/ban_time").toInt() > 0))
     {
@@ -108,6 +116,8 @@ void MainWindow::resetRound()
     ui->answeringPlayer->clear();
     stage = 1;
     unbanAll();
+    reminderTimer.stop();
+    soundSignals.resetReminder(false);
     soundSignals.roundReset();
     banTimer.stop();
 }
@@ -178,31 +188,35 @@ void MainWindow::reassign()
 void MainWindow::getSettingsToControls()
 {
 
-    ui->falseStartsEnable->setChecked(settings.value("falsestarts/falsestarts_enabled").toBool());
-    ui->volumeSlider->setValue(settings.value("sound/volume", ui->volumeSlider->value()).toInt());
+    ui->falseStartsEnable->setChecked(settings.value("falsestarts/falsestarts_enabled", false).toBool());
+    ui->volumeSlider->setValue(settings.value("sound/volume", 50).toInt());
 //    soundSignals.changeVolume(ui->volumeSlider->value());
-    ui->banTime->setValue(settings.value("falsestarts/ban_time").toInt());
-    ui->bannedListShow->setChecked(settings.value("view/show_banned").toBool());
-    if (settings.value("sound/voice").toInt() == 0){
+    ui->banTime->setValue(settings.value("falsestarts/ban_time", 0).toInt());
+    ui->bannedListShow->setChecked(settings.value("view/show_banned", false).toBool());
+    if (settings.value("sound/voice", 1).toInt() == 0){
         ui->voiceSignals->setCheckState(Qt::Unchecked);}
-    else if (settings.value("sound/voice").toInt() == 1)
+    else if (settings.value("sound/voice", 1).toInt() == 1)
         ui->voiceSignals->setCheckState(Qt::PartiallyChecked);
     else
         ui->voiceSignals->setCheckState(Qt::Checked);
-    ui->falseStartVoice->setChecked(settings.value("sound/falsestart_voice").toBool());
+    ui->falseStartVoice->setChecked(settings.value("sound/falsestart_voice", false).toBool());
+    ui->resetReminder->setChecked(settings.value("sound/reset_reminder", true).toBool());
+    ui->resetReminderTime->setValue(settings.value("sound/reset_reminder_time", 10).toInt());
+
 }
 
 void MainWindow::setSettingsFromControls()
 {
-    qDebug() << "setsettings";
-
     settings.setValue("falsestarts/falsestarts_enabled", ui->falseStartsEnable->isChecked());
     settings.setValue("sound/volume", ui->volumeSlider->value());
     settings.setValue("falsestarts/ban_time", ui->banTime->value());
     settings.setValue("view/show_banned", ui->bannedListShow->isChecked());
     settings.setValue("sound/voice", ui->voiceSignals->checkState());
     settings.setValue("sound/falsestart_voice", ui->falseStartVoice->isChecked());
+    settings.setValue("sound/reset_reminder", ui->resetReminder->isChecked());
+    settings.setValue("sound/reset_reminder_time", ui->resetReminderTime->value());
     ui->banTime->setEnabled(settings.value("falsestarts/falsestarts_enabled").toBool());
+    ui->resetReminderTime->setEnabled(settings.value("sound/reset_reminder").toBool());
     ui->falseStartVoice->setEnabled(settings.value("falsestarts/falsestarts_enabled").toBool() && settings.value("sound/voice").toBool());
 }
 
@@ -210,3 +224,9 @@ void MainWindow::showParameters(bool page)
 {
     ui->stackedWidget->setCurrentIndex(page);
 }
+
+void MainWindow::resetReminderSoundStart()
+{
+    soundSignals.resetReminder(true);
+}
+
