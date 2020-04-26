@@ -100,12 +100,12 @@ voice signals</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="164"/>
+        <location filename="../mainwindow.cpp" line="166"/>
         <source>Unplugged</source>
         <translation>Отключение</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="165"/>
+        <location filename="../mainwindow.cpp" line="167"/>
         <source>Gamepad was unplugged</source>
         <translation>Геймпад был отключен</translation>
     </message>

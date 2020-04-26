@@ -161,8 +161,12 @@ void MainWindow::unbanAll()
 
 void MainWindow::gamepadUnplugged(int gamepad)
 {
+//    QTimer::singleShot(4000, this, SLOT(resetReminderSoundStart()));
+    soundSignals.resetReminder(true);
     QMessageBox::critical(this, tr("Unplugged"),
                                      tr("Gamepad was unplugged"));
+    soundSignals.resetReminder(false);
+
 }
 
 void MainWindow::reassign()
@@ -181,8 +185,6 @@ void MainWindow::reassign()
     if (assignwiz.result()){
         playersGamepads = playersGamepadsTemp;
     }
-    //    qDebug()<< "done" << assignwiz.result();
-
 }
 
 void MainWindow::getSettingsToControls()
