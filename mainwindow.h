@@ -33,6 +33,7 @@ private:
     assignWizard assignwiz;
     QSet<int> banned;
     QTimer banTimer;
+    QTimer reminderTimer;
     SoundSignals soundSignals;
     QShortcut resetShortcut;
     QShortcut startShortcut;
@@ -47,6 +48,7 @@ public slots:
     void getSettingsToControls(); //Set UI controls of settings from QSettings
     void setSettingsFromControls(); //Read data from UI controls of settings and write the data to QSettings
     void showParameters(bool);
+    void resetReminderSoundStart(void);
 
 };
 

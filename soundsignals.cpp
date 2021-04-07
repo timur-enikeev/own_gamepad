@@ -13,10 +13,11 @@ SoundSignals::SoundSignals(QObject *parent) : QObject(parent), mPlayer(this, QMe
     addToPlaylist("answer");
     addToPlaylist("answers-player");
     addToPlaylist("false-start");
+    resetReminderPlaylist.setPlaybackMode(QMediaPlaylist::Loop);
+    resetReminderPlaylist.addMedia(QUrl::fromLocalFile(QCoreApplication::applicationDirPath()+"/sounds/reset-reminder.wav"));
 //    mPlayer.setAudioRole(QAudio::GameRole);
     mPlayer.setPlaylist(&currentPlaylist);
     connect(&currentPlaylist, &QMediaPlaylist::currentIndexChanged, [this](int i){if (i==-1) this->currentPlaylist.clear();});
-
 }
 
 void SoundSignals::addPlayerNumberVoices(int numberOfPlayers)
@@ -52,7 +53,7 @@ void SoundSignals::answer(int player, bool shortForm)
         else
         {
             currentPlaylist.addMedia(playlist.media(sounds["answer"]));
-        };
+        }
     }
     else {
 
@@ -83,6 +84,21 @@ void SoundSignals::roundReset(){
 }
 void SoundSignals::roundStart(){
     startSound.play();
+}
+
+void SoundSignals::resetReminder(bool state)
+{
+    if (state)
+    {
+        mPlayer.stop();
+        mPlayer.setPlaylist(&resetReminderPlaylist);
+        mPlayer.play();
+    }
+    else
+    {
+        mPlayer.stop();
+        mPlayer.setPlaylist(&currentPlaylist);
+    }
 }
 
 void SoundSignals::changeVolume(int volume)

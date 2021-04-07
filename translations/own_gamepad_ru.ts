@@ -19,39 +19,44 @@
         <translation>&amp;Пуск</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="219"/>
+        <location filename="../mainwindow.ui" line="226"/>
         <source>Voice signals</source>
         <translation>Голосовые сигналы</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="229"/>
+        <location filename="../mainwindow.ui" line="267"/>
         <source>False start
 voice signals</source>
         <translation>Голосовые сообщения
 о фальстартах</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="252"/>
+        <location filename="../mainwindow.ui" line="251"/>
         <source>Ban time</source>
         <translation>Время блокировки</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="259"/>
+        <location filename="../mainwindow.ui" line="258"/>
         <source>False starts</source>
         <translation>Фальстарты</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="268"/>
+        <location filename="../mainwindow.ui" line="219"/>
         <source>Show banned</source>
         <translation>Показать заблокированных</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="316"/>
+        <location filename="../mainwindow.ui" line="294"/>
+        <source>Seconds before reminder</source>
+        <translation>Секунд до напоминания</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="344"/>
         <source>Parameters</source>
         <translation>Параметры</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="319"/>
+        <location filename="../mainwindow.ui" line="347"/>
         <source>Ctrl+P</source>
         <translation></translation>
     </message>
@@ -71,27 +76,36 @@ voice signals</source>
         <translation>Громкость</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="302"/>
+        <location filename="../mainwindow.ui" line="275"/>
+        <source>Reset reminder</source>
+        <translation>Напоминать о сбросе</translation>
+    </message>
+    <message>
+        <source>Time before reimnder</source>
+        <translation type="obsolete">Секунд до напоминания</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="330"/>
         <source>Reassign</source>
         <translation>Переназначить</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="305"/>
+        <location filename="../mainwindow.ui" line="333"/>
         <source>Reassign gamepads</source>
         <translation>Переназначить геймпады</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="308"/>
+        <location filename="../mainwindow.ui" line="336"/>
         <source>Ctrl+R</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="154"/>
+        <location filename="../mainwindow.cpp" line="166"/>
         <source>Unplugged</source>
         <translation>Отключение</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="155"/>
+        <location filename="../mainwindow.cpp" line="167"/>
         <source>Gamepad was unplugged</source>
         <translation>Геймпад был отключен</translation>
     </message>

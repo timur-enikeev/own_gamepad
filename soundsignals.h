@@ -23,12 +23,15 @@ private:
     QMediaPlaylist playlist;
     QMap<QString, int> sounds; // key is name of sound, value is index in playlist
     QMediaPlaylist currentPlaylist;
+    QMediaPlaylist resetReminderPlaylist;
     void addToPlaylist(QString name);
 
 signals:
 
 public slots:
     void changeVolume(int volume); // from 0 to 100
+    void resetReminder(bool state); // false: don't play a reminder, true: play a reminder
+
 };
 
 #endif // SOUNDSIGNALS_H

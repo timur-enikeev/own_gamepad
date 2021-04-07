@@ -61,6 +61,7 @@ DISTFILES += \
     sounds/answer.wav \
     sounds/answers-player.wav \
     sounds/false-start.wav \
+    sounds/reset-reminder.wav \
     sounds/reset.wav \
     sounds/start.wav
 
