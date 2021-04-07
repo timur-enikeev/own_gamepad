@@ -80,9 +80,11 @@ void SoundSignals::falseStart(int player)
 }
 
 void SoundSignals::roundReset(){
+    currentPlaylist.clear();
     resetSound.play();
 }
 void SoundSignals::roundStart(){
+    currentPlaylist.clear();
     startSound.play();
 }
 
